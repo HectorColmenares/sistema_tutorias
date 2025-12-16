@@ -1,47 +1,99 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="es">
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión - Sistema de Tutorías</title>
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    {{-- CSS público (no cambia funcionalidad) --}}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+
+    {{-- Bootstrap Icons --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    {{-- Vite (Tailwind/Breeze) --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body>
+    <!-- ====== ENCABEZADO ====== -->
+    <header class="login-header">
+        <h1>Inicio de Sesión</h1>
+
+    </header>
+
+    <!-- ====== CONTENEDOR PRINCIPAL ====== -->
+    <main class="login-container">
+        <!-- COLUMNA IZQUIERDA -->
+        <div class="login-left">
+            <img src="{{ asset('imagenes/tepos.jpg') }}" alt="Logo ITST" class="logo-itst">
+            <img src="{{ asset('imagenes/tecnm.png') }}" alt="Logo TecNM" class="logo-tecnm">
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <!-- COLUMNA DERECHA -->
+        <div class="login-right">
+            <h2>TUTORÍAS</h2>
+            <p class="login-subtitle">Sistema de Gestión de Tutorías Académicas ITSTE</p>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
+            {{-- Status (ej. “Se envió el correo…”) --}}
+            @if (session('status'))
+                <div class="success-message">
+                    <i class="bi bi-check-circle"></i>
+                    {{ session('status') }}
+                </div>
             @endif
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+            {{-- Errores de validación --}}
+            @if ($errors->any())
+                <div class="error-message">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    {{ $errors->first() }}
+                </div>
+            @endif
+
+            {{-- ✅ Mantenemos la funcionalidad original de Breeze --}}
+            <form method="POST" action="{{ route('login') }}" class="login-form">
+                @csrf
+
+                <div class="input-group">
+                    <i class="bi bi-person-circle"></i>
+                    <input type="email" name="email" placeholder="Correo electrónico" value="{{ old('email') }}"
+                        required autofocus autocomplete="username">
+                </div>
+
+                <div class="input-group">
+                    <i class="bi bi-lock-fill"></i>
+                    <input type="password" name="password" placeholder="Contraseña" required
+                        autocomplete="current-password">
+                </div>
+
+                {{-- ⚠️ Roles: SOLO DISEÑO (sin name, sin required) para no cambiar lógica --}}
+                {{-- Si luego quieres login por rol, lo implementamos aparte. --}}
+
+
+                <div class="login-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember">
+                        <span class="checkmark"></span>
+                        Recordarme
+                    </label>
+
+
+
+                    <label class="role-option">
+
+                        ¿Olvidaste tu contraseña?, contacta al Coordinador.
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-acceder">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Acceder
+                </button>
+            </form>
         </div>
-    </form>
-</x-guest-layout>
+    </main>
+</body>
+
+</html>

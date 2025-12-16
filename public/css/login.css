@@ -1,0 +1,370 @@
+/* Reset base */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* Background image for the login page */
+    background-image: url('/imagenes/ISTTE.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    /* leave space at top for the fixed header */
+    padding-top: 90px;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ====== HEADER (fijo) ====== */
+.login-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(90deg, #FF771B 0%, #FF771B 100%);
+    color: #fff;
+    text-align: center;
+    padding: 0 20px;
+
+    font-size: 1.6rem;
+    font-weight: 800;
+
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+    z-index: 60;
+    border-bottom: 4px solid rgba(255, 140, 0, 0.12);
+}
+
+/* Link "volver" (en el header) */
+.back-home {
+    position: absolute;
+    left: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255, 255, 255, 0.95);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+.back-home:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* ====== CONTENEDOR PRINCIPAL ====== */
+.login-container {
+    width: 90vw;
+    max-width: 1100px;
+
+    /* Fill the available browser height under the fixed header */
+    min-height: calc(100vh - 90px - 40px);
+    margin: 20px auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* Make the main panel semi-transparent so the background image shows through */
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* ====== COLUMNA IZQUIERDA ====== */
+.login-left {
+    width: 300px;
+    min-width: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px 20px;
+    border-right: 1px solid rgba(230, 230, 230, 0.6);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.login-left .logo-itst {
+    width: 160px;
+    margin-bottom: 36px;
+}
+
+.login-left .logo-tecnm {
+    width: 140px;
+}
+
+.login-left img {
+    display: block;
+    opacity: 0.95;
+}
+
+/* ====== COLUMNA DERECHA ====== */
+.login-right {
+    flex: 1;
+    padding: 60px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-right h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+    color: #111;
+    letter-spacing: 1px;
+}
+
+.login-subtitle {
+    margin: 0 0 18px 0;
+    color: #444;
+    opacity: .85;
+    text-align: center;
+}
+
+/* ====== MENSAJES ====== */
+.error-message,
+.success-message {
+    width: 100%;
+    max-width: 520px;
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.error-message {
+    background: rgba(239, 68, 68, 0.10);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #991b1b;
+}
+
+.success-message {
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.25);
+    color: #166534;
+}
+
+/* ====== FORM ====== */
+.login-form {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    align-items: center;
+}
+
+/* Inputs redondeados */
+.input-group {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: #f0f0f0;
+    border-radius: 28px;
+    padding: 12px 18px;
+
+    border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.input-group i {
+    font-size: 1.8rem;
+    color: #222;
+    width: 38px;
+    text-align: center;
+}
+
+.input-group input {
+    border: none;
+    outline: none;
+    background: transparent;
+    flex: 1;
+    font-size: 1.05rem;
+    color: #333;
+    padding: 6px 4px;
+}
+
+.input-group input::placeholder {
+    color: #bfbfbf;
+}
+
+/* ====== ROLES (visual only) ====== */
+/* En el Blade los dejamos deshabilitados. Aquí solo estilo. */
+.roles {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.roles label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Radios custom (aunque estén disabled) */
+.roles input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 50%;
+    border: 2px solid #d6d6d6;
+    display: inline-block;
+    position: relative;
+    background: #fff;
+}
+
+.roles input[type="radio"]:checked {
+    border-color: #FF771B;
+    box-shadow: inset 0 0 0 6px #FF771B;
+}
+
+/* Visual-only: ligeramente más apagado */
+.roles.is-visual-only {
+    opacity: .65;
+}
+
+/* ====== OPCIONES (remember + forgot) ====== */
+.login-options {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* Checkbox estilo simple (usa el nativo) */
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+.forgot-password {
+    color: #FF771B;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* ====== BOTÓN ====== */
+.btn-acceder {
+    width: 260px;
+    background: linear-gradient(90deg, #FF771B, #FF771B);
+    color: #fff;
+    border: none;
+    border-radius: 28px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 12px;
+    box-shadow: 0 6px 18px rgba(255, 140, 0, 0.18);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-acceder:hover {
+    filter: brightness(0.95);
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 900px) {
+    .login-container {
+        width: 95vw;
+        height: auto;
+        flex-direction: column;
+    }
+
+    .login-left {
+        width: 100%;
+        min-width: auto;
+        padding: 28px;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .login-right {
+        padding: 28px;
+    }
+
+    .btn-acceder {
+        width: 220px;
+    }
+
+    .back-home {
+        position: static;
+        margin-left: 0;
+    }
+
+    .login-header {
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-header {
+        font-size: 1.25rem;
+        padding: 18px 12px;
+    }
+
+    .input-group i {
+        font-size: 1.4rem;
+    }
+
+    .input-group {
+        padding: 10px 12px;
+        border-radius: 22px;
+    }
+
+    .roles {
+        gap: 18px;
+    }
+}
