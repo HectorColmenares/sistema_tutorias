@@ -8,6 +8,7 @@ use App\Http\Controllers\Coordinador\DashboardController as CoordinadorDashboard
 use App\Http\Controllers\Tutor\DashboardController as TutorDashboardController;
 use App\Http\Controllers\Alumno\DashboardController as AlumnoDashboardController;
 use App\Http\Controllers\Coordinador\PeriodoController;
+use App\Http\Controllers\Coordinador\AltasController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -29,6 +30,16 @@ Route::middleware(['auth', 'verified', 'role:coordinador'])
     ->prefix('coordinador')
     ->name('coordinador.')
     ->group(function () {
+        Route::get('altas', [AltasController::class, 'index'])->name('altas.index');
+
+Route::get('altas/tutor/crear', [AltasController::class, 'createTutor'])->name('altas.tutor.create');
+Route::post('altas/tutor', [AltasController::class, 'storeTutor'])->name('altas.tutor.store');
+
+Route::get('altas/alumno/crear', [AltasController::class, 'createAlumno'])->name('altas.alumno.create');
+Route::post('altas/alumno', [AltasController::class, 'storeAlumno'])->name('altas.alumno.store');
+
+Route::get('altas/password', [AltasController::class, 'editPassword'])->name('altas.password.edit');
+Route::patch('altas/password', [AltasController::class, 'updatePassword'])->name('altas.password.update');
 
         // Dashboard coordinador
         Route::get('/dashboard', CoordinadorDashboardController::class)->name('dashboard');

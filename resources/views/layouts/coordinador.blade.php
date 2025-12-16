@@ -53,11 +53,13 @@
                 </li>
 
                 <li>
-                    <a href="#" class="{{ request()->is('coordinador/altas*') ? 'active' : '' }}" title="Altas">
+                    <a href="{{ route('coordinador.altas.index') }}"
+                        class="{{ request()->routeIs('coordinador.altas.*') ? 'active' : '' }}" title="Altas">
                         <i class="bi bi-person-plus-fill"></i>
                         <span class="menu-text">Altas</span>
                     </a>
                 </li>
+
 
                 <li>
                     <a href="#" class="{{ request()->is('coordinador/calendarizacion*') ? 'active' : '' }}"
