@@ -7,12 +7,13 @@ use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Coordinador\DashboardController as CoordinadorDashboardController;
 use App\Http\Controllers\Tutor\DashboardController as TutorDashboardController;
 use App\Http\Controllers\Alumno\DashboardController as AlumnoDashboardController;
+use App\Http\Controllers\Coordinador\PeriodoController;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return redirect()->route('login');
+})->name('welcome');
 
-//  /dashboard ahora REDIRIGE según el rol
+// /dashboard ahora REDIRIGE según el rol
 Route::get('/dashboard', DashboardRedirectController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
@@ -23,14 +24,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ✅ Rutas por rol (dashboards mínimos)
+// ================= COORDINADOR =================
 Route::middleware(['auth', 'verified', 'role:coordinador'])
     ->prefix('coordinador')
     ->name('coordinador.')
     ->group(function () {
+
+        // Dashboard coordinador
         Route::get('/dashboard', CoordinadorDashboardController::class)->name('dashboard');
+
+        // ====== PERIODOS ======
+        Route::resource('periodos', PeriodoController::class)->except(['show']);
+
+        Route::patch('periodos/{periodo}/activar', [PeriodoController::class, 'activar'])
+            ->name('periodos.activar');
     });
 
+// ================= TUTOR =================
 Route::middleware(['auth', 'verified', 'role:tutor'])
     ->prefix('tutor')
     ->name('tutor.')
@@ -38,6 +48,7 @@ Route::middleware(['auth', 'verified', 'role:tutor'])
         Route::get('/dashboard', TutorDashboardController::class)->name('dashboard');
     });
 
+// ================= ALUMNO =================
 Route::middleware(['auth', 'verified', 'role:alumno'])
     ->prefix('alumno')
     ->name('alumno.')
