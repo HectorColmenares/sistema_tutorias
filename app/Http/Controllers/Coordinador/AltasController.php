@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Coordinador;
 
 use App\Http\Controllers\Controller;
+use App\Imports\AlumnosImport;
+use App\Imports\TutoresImport;
 use App\Models\Alumno;
 use App\Models\Tutor;
 use App\Models\User;
@@ -10,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AltasController extends Controller
 {
@@ -27,14 +30,13 @@ class AltasController extends Controller
     public function storeTutor(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required','string','max:255'],
-            'email' => ['required','email','max:255', Rule::unique('users','email')],
-            'password' => ['required','string','min:8','confirmed'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
 
-            // campos de tutores (ajusta si tu tabla tiene otros)
-            'departamento' => ['nullable','string','max:255'],
-            'cedula' => ['nullable','string','max:255'],
-            'telefono' => ['nullable','string','max:50'],
+            'departamento' => ['nullable', 'string', 'max:255'],
+            'cedula' => ['nullable', 'string', 'max:255'],
+            'telefono' => ['nullable', 'string', 'max:50'],
         ]);
 
         DB::transaction(function () use ($data) {
@@ -53,7 +55,9 @@ class AltasController extends Controller
             ]);
         });
 
-        return redirect()->route('coordinador.altas.index')->with('status', 'Tutor creado correctamente.');
+        return redirect()
+            ->route('coordinador.altas.index')
+            ->with('status', 'Tutor creado correctamente.');
     }
 
     // ====== ALUMNO ======
@@ -65,15 +69,14 @@ class AltasController extends Controller
     public function storeAlumno(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required','string','max:255'],
-            'email' => ['required','email','max:255', Rule::unique('users','email')],
-            'password' => ['required','string','min:8','confirmed'],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
 
-            // campos de alumnos (ajusta si tu tabla tiene otros)
-            'numero_control' => ['required','string','max:50', Rule::unique('alumnos','numero_control')],
-            'carrera' => ['required','string','max:255'],
-            'grupo' => ['nullable','string','max:10'],
-            'telefono' => ['nullable','string','max:50'],
+            'numero_control' => ['required', 'string', 'max:50', Rule::unique('alumnos', 'numero_control')],
+            'carrera' => ['required', 'string', 'max:255'],
+            'grupo' => ['nullable', 'string', 'max:10'],
+            'telefono' => ['nullable', 'string', 'max:50'],
         ]);
 
         DB::transaction(function () use ($data) {
@@ -93,7 +96,9 @@ class AltasController extends Controller
             ]);
         });
 
-        return redirect()->route('coordinador.altas.index')->with('status', 'Alumno creado correctamente.');
+        return redirect()
+            ->route('coordinador.altas.index')
+            ->with('status', 'Alumno creado correctamente.');
     }
 
     // ====== PASSWORD ======
@@ -105,14 +110,55 @@ class AltasController extends Controller
     public function updatePassword(Request $request)
     {
         $data = $request->validate([
-            'email' => ['required','email', 'exists:users,email'],
-            'password' => ['required','string','min:8','confirmed'],
+            'email' => ['required', 'email', 'exists:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         User::where('email', $data['email'])->update([
             'password' => Hash::make($data['password']),
         ]);
 
-        return redirect()->route('coordinador.altas.index')->with('status', 'Contraseña actualizada correctamente.');
+        return redirect()
+            ->route('coordinador.altas.index')
+            ->with('status', 'Contraseña actualizada correctamente.');
+    }
+
+    // ====== IMPORT EXCEL ======
+    public function importAlumnos(Request $request)
+    {
+        $request->validate([
+            'archivo' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ]);
+
+        $import = new AlumnosImport();
+        Excel::import($import, $request->file('archivo'));
+
+        $ok = $import->getSuccessCount();
+        $failures = $import->failures();
+        $fail = count($failures);
+
+        return redirect()
+            ->route('coordinador.altas.index')
+            ->with('status', "Importación alumnos: $ok creados, $fail con error.")
+            ->with('import_failures', $failures);
+    }
+
+    public function importTutores(Request $request)
+    {
+        $request->validate([
+            'archivo' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ]);
+
+        $import = new TutoresImport();
+        Excel::import($import, $request->file('archivo'));
+
+        $ok = $import->getSuccessCount();
+        $failures = $import->failures();
+        $fail = count($failures);
+
+        return redirect()
+            ->route('coordinador.altas.index')
+            ->with('status', "Importación tutores: $ok creados, $fail con error.")
+            ->with('import_failures', $failures);
     }
 }

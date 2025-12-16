@@ -41,6 +41,10 @@ Route::post('altas/alumno', [AltasController::class, 'storeAlumno'])->name('alta
 Route::get('altas/password', [AltasController::class, 'editPassword'])->name('altas.password.edit');
 Route::patch('altas/password', [AltasController::class, 'updatePassword'])->name('altas.password.update');
 
+Route::post('altas/alumnos/importar', [AltasController::class, 'importAlumnos'])->name('altas.alumnos.import');
+Route::post('altas/tutores/importar', [AltasController::class, 'importTutores'])->name('altas.tutores.import');
+
+
         // Dashboard coordinador
         Route::get('/dashboard', CoordinadorDashboardController::class)->name('dashboard');
 
