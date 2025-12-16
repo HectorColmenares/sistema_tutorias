@@ -62,7 +62,8 @@
 
 
                 <li>
-                    <a href="#" class="{{ request()->is('coordinador/calendarizacion*') ? 'active' : '' }}"
+                    <a href="{{ route('coordinador.calendarizacion.index') }}"
+                        class="{{ request()->is('coordinador/calendarizacion*') ? 'active' : '' }}"
                         title="Calendarización">
                         <i class="bi bi-calendar-week-fill"></i>
                         <span class="menu-text">Calendarización</span>
@@ -78,7 +79,8 @@
                 </li>
 
                 <li>
-                    <a href="#" class="{{ request()->is('coordinador/grupos*') ? 'active' : '' }}" title="Grupos">
+                    <a href="#" class="{{ request()->is('coordinador/grupos*') ? 'active' : '' }}"
+                        title="Grupos">
                         <i class="bi bi-diagram-3-fill"></i>
                         <span class="menu-text">Grupos</span>
                     </a>

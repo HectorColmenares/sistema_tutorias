@@ -7,8 +7,10 @@ use App\Http\Controllers\DashboardRedirectController;
 use App\Http\Controllers\Coordinador\DashboardController as CoordinadorDashboardController;
 use App\Http\Controllers\Tutor\DashboardController as TutorDashboardController;
 use App\Http\Controllers\Alumno\DashboardController as AlumnoDashboardController;
+
 use App\Http\Controllers\Coordinador\PeriodoController;
 use App\Http\Controllers\Coordinador\AltasController;
+use App\Http\Controllers\Coordinador\CalendarizacionController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -30,29 +32,41 @@ Route::middleware(['auth', 'verified', 'role:coordinador'])
     ->prefix('coordinador')
     ->name('coordinador.')
     ->group(function () {
-        Route::get('altas', [AltasController::class, 'index'])->name('altas.index');
-
-Route::get('altas/tutor/crear', [AltasController::class, 'createTutor'])->name('altas.tutor.create');
-Route::post('altas/tutor', [AltasController::class, 'storeTutor'])->name('altas.tutor.store');
-
-Route::get('altas/alumno/crear', [AltasController::class, 'createAlumno'])->name('altas.alumno.create');
-Route::post('altas/alumno', [AltasController::class, 'storeAlumno'])->name('altas.alumno.store');
-
-Route::get('altas/password', [AltasController::class, 'editPassword'])->name('altas.password.edit');
-Route::patch('altas/password', [AltasController::class, 'updatePassword'])->name('altas.password.update');
-
-Route::post('altas/alumnos/importar', [AltasController::class, 'importAlumnos'])->name('altas.alumnos.import');
-Route::post('altas/tutores/importar', [AltasController::class, 'importTutores'])->name('altas.tutores.import');
-
 
         // Dashboard coordinador
         Route::get('/dashboard', CoordinadorDashboardController::class)->name('dashboard');
 
+        // ====== ALTAS ======
+        Route::get('altas', [AltasController::class, 'index'])->name('altas.index');
+
+        Route::get('altas/tutor/crear', [AltasController::class, 'createTutor'])->name('altas.tutor.create');
+        Route::post('altas/tutor', [AltasController::class, 'storeTutor'])->name('altas.tutor.store');
+
+        Route::get('altas/alumno/crear', [AltasController::class, 'createAlumno'])->name('altas.alumno.create');
+        Route::post('altas/alumno', [AltasController::class, 'storeAlumno'])->name('altas.alumno.store');
+
+        Route::get('altas/password', [AltasController::class, 'editPassword'])->name('altas.password.edit');
+        Route::patch('altas/password', [AltasController::class, 'updatePassword'])->name('altas.password.update');
+
+        Route::post('altas/alumnos/importar', [AltasController::class, 'importAlumnos'])->name('altas.alumnos.import');
+        Route::post('altas/tutores/importar', [AltasController::class, 'importTutores'])->name('altas.tutores.import');
+
         // ====== PERIODOS ======
         Route::resource('periodos', PeriodoController::class)->except(['show']);
-
         Route::patch('periodos/{periodo}/activar', [PeriodoController::class, 'activar'])
             ->name('periodos.activar');
+
+        // ====== CALENDARIZACIÓN ======
+        Route::prefix('calendarizacion')->name('calendarizacion.')->group(function () {
+            Route::get('/', [CalendarizacionController::class, 'index'])->name('index');
+            Route::post('/generar-16', [CalendarizacionController::class, 'generar16'])->name('generar16');
+
+            // ✅ Guardar edición masiva por periodo (IMPORTANTE: nombre único)
+            Route::put('/periodo/{periodo}', [CalendarizacionController::class, 'updatePeriodo'])->name('updatePeriodo');
+
+            // ✅ Eliminar sesión específica (IMPORTANTE: nombre único)
+            Route::delete('/sesion/{sesion}', [CalendarizacionController::class, 'destroy'])->name('destroy');
+        });
     });
 
 // ================= TUTOR =================
@@ -71,4 +85,4 @@ Route::middleware(['auth', 'verified', 'role:alumno'])
         Route::get('/dashboard', AlumnoDashboardController::class)->name('dashboard');
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
