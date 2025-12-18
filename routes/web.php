@@ -88,6 +88,27 @@ Route::middleware(['auth', 'verified', 'role:tutor'])
         Route::get('/dashboard', TutorDashboardController::class)->name('dashboard');
     });
 
+    use App\Http\Controllers\Tutor\TutorPagesController;
+
+Route::middleware(['auth', 'verified', 'role:tutor'])
+    ->prefix('tutor')
+    ->name('tutor.')
+    ->group(function () {
+
+        Route::get('/dashboard', function () {
+            return view('tutor.dashboard');
+        })->name('dashboard');
+
+        Route::get('/documentos', [TutorPagesController::class, 'documentos'])->name('documentos');
+        Route::get('/calendarizacion', [TutorPagesController::class, 'calendarizacion'])->name('calendarizacion');
+        Route::get('/tutorias', [TutorPagesController::class, 'tutorias'])->name('tutorias');
+        Route::get('/entrevistas', [TutorPagesController::class, 'entrevistas'])->name('entrevistas');
+        Route::get('/asistencias', [TutorPagesController::class, 'asistencias'])->name('asistencias');
+        Route::get('/constancias', [TutorPagesController::class, 'constancias'])->name('constancias');
+        Route::get('/datos', [TutorPagesController::class, 'datos'])->name('datos');
+    });
+
+
 // ================= ALUMNO =================
 Route::middleware(['auth', 'verified', 'role:alumno'])
     ->prefix('alumno')
@@ -95,6 +116,22 @@ Route::middleware(['auth', 'verified', 'role:alumno'])
     ->group(function () {
         Route::get('/dashboard', AlumnoDashboardController::class)->name('dashboard');
     });
+    use App\Http\Controllers\Alumno\AlumnoPagesController;
+
+Route::middleware(['auth', 'verified', 'role:alumno'])
+    ->prefix('alumno')
+    ->name('alumno.')
+    ->group(function () {
+
+        Route::get('/dashboard', AlumnoDashboardController::class)->name('dashboard');
+
+        Route::get('/asistencia', [AlumnoPagesController::class, 'asistencia'])->name('asistencia');
+        Route::get('/constancia', [AlumnoPagesController::class, 'constancia'])->name('constancia');
+        Route::get('/calificacion', [AlumnoPagesController::class, 'calificacion'])->name('calificacion');
+        Route::get('/tutorias', [AlumnoPagesController::class, 'tutorias'])->name('tutorias');
+        Route::get('/datos', [AlumnoPagesController::class, 'datos'])->name('datos');
+    });
+
 
     
 
