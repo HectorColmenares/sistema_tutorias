@@ -106,6 +106,9 @@ Route::middleware(['auth', 'verified', 'role:tutor'])
         Route::get('/asistencias', [TutorPagesController::class, 'asistencias'])->name('asistencias');
         Route::get('/constancias', [TutorPagesController::class, 'constancias'])->name('constancias');
         Route::get('/datos', [TutorPagesController::class, 'datos'])->name('datos');
+        Route::get('/tutorados', [TutorPagesController::class, 'tutorados'])->name('tutorados');
+        Route::get('/calificacion', [TutorPagesController::class, 'calificacion'])->name('calificacion');
+
     });
 
 

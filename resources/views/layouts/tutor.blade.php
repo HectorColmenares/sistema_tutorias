@@ -54,6 +54,19 @@
             </li>
 
             <li>
+                <a href="{{ route('tutor.tutorados') }}" class="{{ request()->routeIs('tutor.tutorados') ? 'active' : '' }}">
+                    <i class="bi bi-person-badge-fill"></i> <span class="menu-text">Tutorados</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('tutor.calificacion') }}" class="{{ request()->routeIs('tutor.calificacion') ? 'active' : '' }}">
+                    <i class="bi bi-award-fill"></i> <span class="menu-text">Calificación</span>
+                </a>
+            </li>
+
+
+            <li>
                 <a href="{{ route('tutor.tutorias') }}" class="{{ request()->routeIs('tutor.tutorias') ? 'active' : '' }}">
                     <i class="bi bi-people-fill"></i> <span class="menu-text">Tutorías</span>
                 </a>

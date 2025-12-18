@@ -8,6 +8,8 @@ class TutorPagesController extends Controller
 {
     public function documentos() { return view('tutor.documentos'); }
     public function calendarizacion() { return view('tutor.calendarizacion'); }
+    public function tutorados() { return view('tutor.tutorados'); }
+    public function calificacion() { return view('tutor.calificacion'); }
     public function tutorias() { return view('tutor.tutorias'); }
     public function entrevistas() { return view('tutor.entrevistas'); }
     public function asistencias() { return view('tutor.asistencias'); }
