@@ -85,4 +85,6 @@ Route::middleware(['auth', 'verified', 'role:alumno'])
         Route::get('/dashboard', AlumnoDashboardController::class)->name('dashboard');
     });
 
+    
+
 require __DIR__ . '/auth.php';
