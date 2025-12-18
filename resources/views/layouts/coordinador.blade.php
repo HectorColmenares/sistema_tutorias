@@ -79,10 +79,18 @@
                 </li>
 
                 <li>
-                    <a href="#" class="{{ request()->is('coordinador/grupos*') ? 'active' : '' }}"
-                        title="Grupos">
+                    <a href="{{ route('coordinador.grupos.index') }}"
+                        class="{{ request()->is('coordinador/grupos*') ? 'active' : '' }}" title="Grupos">
                         <i class="bi bi-diagram-3-fill"></i>
                         <span class="menu-text">Grupos</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('coordinador.periodos.index') }}"
+                        class="{{ request()->routeIs('coordinador.periodos.*') ? 'active' : '' }}" title="Periodos">
+                        <i class="bi bi-clock-history"></i>
+                        <span class="menu-text">Periodos</span>
                     </a>
                 </li>
             </ul>

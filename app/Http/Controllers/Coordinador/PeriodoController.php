@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatePeriodoRequest;
 use App\Models\Periodo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PeriodoController extends Controller
 {
@@ -42,17 +43,19 @@ class PeriodoController extends Controller
     {
         $data = $request->validated();
 
-        // Si viene activo = 1, desactivamos el resto
-        if (!empty($data['activo'])) {
-            Periodo::where('activo', 1)->update(['activo' => 0]);
-        }
+        DB::transaction(function () use ($data) {
+            // Si viene activo = 1, desactivamos el resto
+            if (!empty($data['activo'])) {
+                Periodo::where('activo', 1)->update(['activo' => 0]);
+            }
 
-        Periodo::create([
-            'nombre' => $data['nombre'],
-            'fecha_inicio' => $data['fecha_inicio'],
-            'fecha_fin' => $data['fecha_fin'],
-            'activo' => (bool)($data['activo'] ?? false),
-        ]);
+            Periodo::create([
+                'nombre' => $data['nombre'],
+                'fecha_inicio' => $data['fecha_inicio'],
+                'fecha_fin' => $data['fecha_fin'],
+                'activo' => (bool) ($data['activo'] ?? false),
+            ]);
+        });
 
         return redirect()
             ->route('coordinador.periodos.index')
@@ -70,19 +73,21 @@ class PeriodoController extends Controller
     {
         $data = $request->validated();
 
-        // Si se marca activo = 1, desactivamos el resto
-        if (!empty($data['activo'])) {
-            Periodo::where('activo', 1)
-                ->where('id', '!=', $periodo->id)
-                ->update(['activo' => 0]);
-        }
+        DB::transaction(function () use ($data, $periodo) {
+            // Si se marca activo = 1, desactivamos el resto
+            if (!empty($data['activo'])) {
+                Periodo::where('activo', 1)
+                    ->where('id', '!=', $periodo->id)
+                    ->update(['activo' => 0]);
+            }
 
-        $periodo->update([
-            'nombre' => $data['nombre'],
-            'fecha_inicio' => $data['fecha_inicio'],
-            'fecha_fin' => $data['fecha_fin'],
-            'activo' => (bool)($data['activo'] ?? $periodo->activo),
-        ]);
+            $periodo->update([
+                'nombre' => $data['nombre'],
+                'fecha_inicio' => $data['fecha_inicio'],
+                'fecha_fin' => $data['fecha_fin'],
+                'activo' => (bool) ($data['activo'] ?? $periodo->activo),
+            ]);
+        });
 
         return redirect()
             ->route('coordinador.periodos.index')
@@ -105,12 +110,29 @@ class PeriodoController extends Controller
 
     public function activar(Periodo $periodo): RedirectResponse
     {
-        // Desactiva todos y activa este (operación “único activo”)
-        Periodo::where('activo', 1)->update(['activo' => 0]);
-        $periodo->update(['activo' => 1]);
+        DB::transaction(function () use ($periodo) {
+            // Desactiva todos y activa este (operación “único activo”)
+            Periodo::where('activo', 1)->update(['activo' => 0]);
+            $periodo->update(['activo' => 1]);
+        });
 
         return redirect()
             ->route('coordinador.periodos.index')
             ->with('status', "Periodo '{$periodo->nombre}' activado.");
+    }
+
+    public function desactivar(Periodo $periodo): RedirectResponse
+    {
+        if (!$periodo->activo) {
+            return redirect()
+                ->route('coordinador.periodos.index')
+                ->with('status', "El periodo '{$periodo->nombre}' ya estaba inactivo.");
+        }
+
+        $periodo->update(['activo' => 0]);
+
+        return redirect()
+            ->route('coordinador.periodos.index')
+            ->with('status', "Periodo '{$periodo->nombre}' desactivado. Ahora no hay periodo activo.");
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\Alumno\DashboardController as AlumnoDashboardController
 use App\Http\Controllers\Coordinador\PeriodoController;
 use App\Http\Controllers\Coordinador\AltasController;
 use App\Http\Controllers\Coordinador\CalendarizacionController;
+use App\Http\Controllers\Coordinador\GruposTutoresController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -53,20 +54,30 @@ Route::middleware(['auth', 'verified', 'role:coordinador'])
 
         // ====== PERIODOS ======
         Route::resource('periodos', PeriodoController::class)->except(['show']);
+
         Route::patch('periodos/{periodo}/activar', [PeriodoController::class, 'activar'])
             ->name('periodos.activar');
+
+        Route::patch('periodos/{periodo}/desactivar', [PeriodoController::class, 'desactivar'])
+            ->name('periodos.desactivar');
 
         // ====== CALENDARIZACIÓN ======
         Route::prefix('calendarizacion')->name('calendarizacion.')->group(function () {
             Route::get('/', [CalendarizacionController::class, 'index'])->name('index');
             Route::post('/generar-16', [CalendarizacionController::class, 'generar16'])->name('generar16');
 
-            // ✅ Guardar edición masiva por periodo (IMPORTANTE: nombre único)
+            // Guardar edición masiva por periodo
             Route::put('/periodo/{periodo}', [CalendarizacionController::class, 'updatePeriodo'])->name('updatePeriodo');
 
-            // ✅ Eliminar sesión específica (IMPORTANTE: nombre único)
+            // Eliminar sesión específica
             Route::delete('/sesion/{sesion}', [CalendarizacionController::class, 'destroy'])->name('destroy');
         });
+
+        // ====== GRUPOS (asignación tutor->grupo) ======
+        Route::get('grupos', [GruposTutoresController::class, 'index'])->name('grupos.index');
+        Route::post('grupos', [GruposTutoresController::class, 'store'])->name('grupos.store');
+        Route::get('grupos/{grupoTutor}', [GruposTutoresController::class, 'show'])->name('grupos.show');
+        Route::delete('grupos/{grupoTutor}', [GruposTutoresController::class, 'destroy'])->name('grupos.destroy');
     });
 
 // ================= TUTOR =================
