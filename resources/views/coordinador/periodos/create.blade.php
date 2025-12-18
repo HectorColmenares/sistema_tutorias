@@ -1,60 +1,67 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Nuevo periodo
-        </h2>
-    </x-slot>
+@extends('layouts.coordinador')
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white shadow sm:rounded-lg p-6">
+@section('title', 'Nuevo periodo')
 
-                @if ($errors->any())
-                    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-4">
-                        {{ $errors->first() }}
-                    </div>
-                @endif
+@section('content')
+    <div class="container-fluid">
 
-                <form method="POST" action="{{ route('coordinador.periodos.store') }}" class="space-y-4">
-                    @csrf
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <h2 style="margin:0;">Nuevo periodo</h2>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Nombre</label>
-                        <input name="nombre" value="{{ old('nombre') }}"
-                            class="mt-1 block w-full rounded-md border-gray-300" required maxlength="50">
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Fecha inicio</label>
-                            <input type="date" name="fecha_inicio" value="{{ old('fecha_inicio') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700">Fecha fin</label>
-                            <input type="date" name="fecha_fin" value="{{ old('fecha_fin') }}"
-                                class="mt-1 block w-full rounded-md border-gray-300" required>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <input type="checkbox" name="activo" value="1" class="rounded border-gray-300"
-                            {{ old('activo') ? 'checked' : '' }}>
-                        <label class="text-sm text-gray-700">Marcar como activo</label>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <button class="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700">
-                            Guardar
-                        </button>
-                        <a href="{{ route('coordinador.periodos.index') }}"
-                            class="px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200">
-                            Cancelar
-                        </a>
-                    </div>
-                </form>
-
-            </div>
+            <a href="{{ route('coordinador.periodos.index') }}"
+                style="padding:10px 14px; background:#f3f4f6; border-radius:8px; text-decoration:none; color:#111827;">
+                Volver
+            </a>
         </div>
+
+        @if ($errors->any())
+            <div class="alert alert-danger" style="margin-top:12px;">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <div style="margin-top:16px; background:#fff; border-radius:10px; padding:16px;">
+            <form method="POST" action="{{ route('coordinador.periodos.store') }}">
+                @csrf
+
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-weight:600; margin-bottom:6px;">Nombre</label>
+                    <input name="nombre" value="{{ old('nombre') }}" required maxlength="50"
+                        style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                </div>
+
+                <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
+                    <div style="flex:1; min-width:220px;">
+                        <label style="display:block; font-weight:600; margin-bottom:6px;">Fecha inicio</label>
+                        <input type="date" name="fecha_inicio" value="{{ old('fecha_inicio') }}" required
+                            style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                    </div>
+
+                    <div style="flex:1; min-width:220px;">
+                        <label style="display:block; font-weight:600; margin-bottom:6px;">Fecha fin</label>
+                        <input type="date" name="fecha_fin" value="{{ old('fecha_fin') }}" required
+                            style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+                    </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+                    <input type="checkbox" name="activo" value="1" {{ old('activo') ? 'checked' : '' }}>
+                    <label>Marcar como activo</label>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button type="submit"
+                        style="padding:10px 14px; background:#1f2937; color:#fff; border:none; border-radius:8px; cursor:pointer;">
+                        Guardar
+                    </button>
+
+                    <a href="{{ route('coordinador.periodos.index') }}"
+                        style="padding:10px 14px; background:#f3f4f6; border-radius:8px; text-decoration:none; color:#111827;">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </div>
+
     </div>
-</x-app-layout>
+@endsection

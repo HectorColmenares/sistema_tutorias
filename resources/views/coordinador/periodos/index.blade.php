@@ -1,127 +1,162 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Periodos
-            </h2>
+@extends('layouts.coordinador')
+
+@section('title', 'Periodos')
+
+@section('content')
+    <div class="container-fluid">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+            <h2 style="margin:0;">Periodos</h2>
 
             <a href="{{ route('coordinador.periodos.create') }}"
-                class="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-md text-sm hover:bg-gray-700">
+                style="padding:10px 14px; background:#1f2937; color:#fff; border-radius:8px; text-decoration:none;">
                 Nuevo periodo
             </a>
         </div>
-    </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+        {{-- Mensajes --}}
+        @if (session('status'))
+            <div class="alert alert-success" style="margin-top:12px;">
+                {{ session('status') }}
+            </div>
+        @endif
 
-            @if (session('status'))
-                <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded">
-                    {{ session('status') }}
-                </div>
-            @endif
+        @if ($errors->any())
+            <div class="alert alert-danger" style="margin-top:12px;">
+                {{ $errors->first() }}
+            </div>
+        @endif
 
-            @if ($errors->any())
-                <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded">
-                    {{ $errors->first() }}
-                </div>
-            @endif
+        {{-- Buscador + Periodo activo --}}
+        <div style="margin-top:16px; padding:16px; background:#fff; border-radius:10px;">
+            <form method="GET" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <input type="text" name="q" value="{{ $q }}" placeholder="Buscar por nombre…"
+                    style="padding:10px; border:1px solid #ddd; border-radius:8px; min-width:260px;">
 
-            <div class="bg-white shadow sm:rounded-lg p-6">
-                <form method="GET" class="flex gap-3 items-center">
-                    <input type="text" name="q" value="{{ $q }}" placeholder="Buscar por nombre…"
-                        class="w-full max-w-md rounded-md border-gray-300" />
-                    <button class="px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200">
-                        Buscar
-                    </button>
-                </form>
+                <button type="submit" style="padding:10px 14px; border-radius:8px; border:1px solid #ddd; cursor:pointer;">
+                    Buscar
+                </button>
+            </form>
 
+            <div
+                style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
                 @if ($periodoActivo)
-                    <p class="mt-4 text-sm text-gray-700">
-                        <span class="font-semibold">Periodo activo:</span>
-                        {{ $periodoActivo->nombre }} ({{ $periodoActivo->fecha_inicio->format('Y-m-d') }} a
-                        {{ $periodoActivo->fecha_fin->format('Y-m-d') }})
-                    </p>
+                    <div>
+                        <b>Periodo activo:</b>
+                        {{ $periodoActivo->nombre }}
+                        ({{ optional($periodoActivo->fecha_inicio)->format('Y-m-d') }} a
+                        {{ optional($periodoActivo->fecha_fin)->format('Y-m-d') }})
+                    </div>
+
+                    <form method="POST" action="{{ route('coordinador.periodos.desactivar', $periodoActivo) }}"
+                        onsubmit="return confirm('¿Desactivar el periodo activo? Esto puede impedir calendarización y grupos hasta que actives otro.');">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit"
+                            style="padding:10px 14px; background:#d97706; color:#fff; border:none; border-radius:8px; cursor:pointer;">
+                            Desactivar periodo activo
+                        </button>
+                    </form>
                 @else
-                    <p class="mt-4 text-sm text-gray-700">
-                        No hay periodo activo.
-                    </p>
+                    <div><b>Periodo activo:</b> No hay periodo activo.</div>
                 @endif
             </div>
-
-            <div class="bg-white shadow sm:rounded-lg overflow-hidden">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="text-left px-6 py-3">Nombre</th>
-                            <th class="text-left px-6 py-3">Inicio</th>
-                            <th class="text-left px-6 py-3">Fin</th>
-                            <th class="text-left px-6 py-3">Activo</th>
-                            <th class="text-right px-6 py-3">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y">
-                        @foreach ($periodos as $periodo)
-                            <tr>
-                                <td class="px-6 py-3 font-medium text-gray-900">{{ $periodo->nombre }}</td>
-                                <td class="px-6 py-3">{{ optional($periodo->fecha_inicio)->format('Y-m-d') }}</td>
-                                <td class="px-6 py-3">{{ optional($periodo->fecha_fin)->format('Y-m-d') }}</td>
-                                <td class="px-6 py-3">
-                                    @if ($periodo->activo)
-                                        <span
-                                            class="inline-flex px-2 py-1 rounded bg-green-100 text-green-800">Sí</span>
-                                    @else
-                                        <span class="inline-flex px-2 py-1 rounded bg-gray-100 text-gray-700">No</span>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-3">
-                                    <div class="flex justify-end gap-2">
-                                        <a href="{{ route('coordinador.periodos.edit', $periodo) }}"
-                                            class="px-3 py-1 rounded bg-gray-100 hover:bg-gray-200">
-                                            Editar
-                                        </a>
-
-                                        @if (!$periodo->activo)
-                                            <form method="POST"
-                                                action="{{ route('coordinador.periodos.activar', $periodo) }}">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button
-                                                    class="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-500">
-                                                    Activar
-                                                </button>
-                                            </form>
-
-                                            <form method="POST"
-                                                action="{{ route('coordinador.periodos.destroy', $periodo) }}"
-                                                onsubmit="return confirm('¿Eliminar este periodo?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button
-                                                    class="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-500">
-                                                    Eliminar
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-
-                        @if ($periodos->count() === 0)
-                            <tr>
-                                <td class="px-6 py-8 text-center text-gray-600" colspan="5">
-                                    Sin periodos.
-                                </td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div>
-
-            <div>
-                {{ $periodos->links() }}
-            </div>
         </div>
+
+        {{-- Tabla --}}
+        <div style="margin-top:16px; background:#fff; border-radius:10px; overflow:hidden;">
+            <table style="width:100%; border-collapse:collapse;">
+                <thead style="background:#f3f4f6;">
+                    <tr>
+                        <th style="text-align:left; padding:12px; border-bottom:1px solid #e5e7eb;">Nombre</th>
+                        <th style="text-align:left; padding:12px; border-bottom:1px solid #e5e7eb;">Inicio</th>
+                        <th style="text-align:left; padding:12px; border-bottom:1px solid #e5e7eb;">Fin</th>
+                        <th style="text-align:left; padding:12px; border-bottom:1px solid #e5e7eb;">Estado</th>
+                        <th style="text-align:right; padding:12px; border-bottom:1px solid #e5e7eb;">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($periodos as $periodo)
+                        <tr>
+                            <td style="padding:12px; border-bottom:1px solid #f1f5f9;">
+                                <b>{{ $periodo->nombre }}</b>
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #f1f5f9;">
+                                {{ optional($periodo->fecha_inicio)->format('Y-m-d') }}
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #f1f5f9;">
+                                {{ optional($periodo->fecha_fin)->format('Y-m-d') }}
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #f1f5f9;">
+                                @if ($periodo->activo)
+                                    <span
+                                        style="background:#dcfce7; color:#166534; padding:4px 8px; border-radius:999px; font-weight:600;">
+                                        ACTIVO
+                                    </span>
+                                @else
+                                    <span
+                                        style="background:#f3f4f6; color:#374151; padding:4px 8px; border-radius:999px; font-weight:600;">
+                                        INACTIVO
+                                    </span>
+                                @endif
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #f1f5f9; text-align:right;">
+                                <div style="display:inline-flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+                                    <a href="{{ route('coordinador.periodos.edit', $periodo) }}"
+                                        style="padding:8px 10px; border-radius:8px; background:#f3f4f6; text-decoration:none; color:#111827;">
+                                        Editar
+                                    </a>
+
+                                    @if (!$periodo->activo)
+                                        <form method="POST" action="{{ route('coordinador.periodos.activar', $periodo) }}"
+                                            onsubmit="return confirm('¿Activar este periodo? El periodo activo actual se desactivará.');">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit"
+                                                style="padding:8px 10px; border-radius:8px; background:#2563eb; color:#fff; border:none; cursor:pointer;">
+                                                Activar
+                                            </button>
+                                        </form>
+
+                                        <form method="POST" action="{{ route('coordinador.periodos.destroy', $periodo) }}"
+                                            onsubmit="return confirm('¿Eliminar este periodo?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                style="padding:8px 10px; border-radius:8px; background:#dc2626; color:#fff; border:none; cursor:pointer;">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form method="POST"
+                                            action="{{ route('coordinador.periodos.desactivar', $periodo) }}"
+                                            onsubmit="return confirm('¿Desactivar este periodo?');">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit"
+                                                style="padding:8px 10px; border-radius:8px; background:#d97706; color:#fff; border:none; cursor:pointer;">
+                                                Desactivar
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" style="padding:18px; text-align:center; color:#6b7280;">
+                                Sin periodos.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top:16px;">
+            {{ $periodos->links() }}
+        </div>
+
     </div>
-</x-app-layout>
+@endsection
